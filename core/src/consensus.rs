@@ -599,7 +599,7 @@ impl Tower {
         vote_state.as_ref().ok()?.last_voted_slot()
     }
 
-    pub fn record_bank_vote(&mut self, bank: &Bank) -> Option<Slot> {
+    pub fn record_bank_vote(&mut self, bank: &Bank, pop_expired: bool) -> Option<Slot> {
         // Returns the new root if one is made after applying a vote for the given bank to
         // `self.vote_state`
         self.record_bank_vote_and_update_lockouts(
@@ -607,6 +607,7 @@ impl Tower {
             bank.hash(),
             bank.feature_set
                 .is_active(&feature_set::enable_tower_sync_ix::id()),
+            pop_expired,
         )
     }
 
@@ -649,12 +650,13 @@ impl Tower {
         vote_slot: Slot,
         vote_hash: Hash,
         enable_tower_sync_ix: bool,
+        pop_expired: bool,
     ) -> Option<Slot> {
         trace!("{} record_vote for {}", self.node_pubkey, vote_slot);
         let old_root = self.root();
 
         let vote = Vote::new(vec![vote_slot], vote_hash);
-        let result = process_vote_unchecked(&mut self.vote_state, vote);
+        let result = process_vote_unchecked(&mut self.vote_state, vote, pop_expired);
         if result.is_err() {
             panic!(
                 "Error while recording vote {} {} in local tower {:?}",
