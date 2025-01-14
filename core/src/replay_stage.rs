@@ -2372,7 +2372,7 @@ impl ReplayStage {
             datapoint_info!("replay_stage-voted_empty_bank", ("slot", bank.slot(), i64));
         }
         trace!("handle votable bank {}", bank.slot());
-        let new_root = tower.record_bank_vote(bank);
+        let new_root = tower.record_bank_vote(bank, true);
 
         if let Some(new_root) = new_root {
             // get the root bank before squash
