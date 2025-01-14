@@ -776,6 +776,7 @@ pub fn process_vote_unfiltered(
             current_slot,
             timely_vote_credits,
             deprecate_unused_legacy_vote_plumbing,
+            true,
         )
     });
     Ok(())
@@ -813,6 +814,7 @@ pub fn process_vote(
         current_slot,
         timely_vote_credits,
         deprecate_unused_legacy_vote_plumbing,
+        true,
     )
 }
 
@@ -1125,6 +1127,7 @@ pub fn process_vote_with_account<S: std::hash::BuildHasher>(
         clock.slot,
         timely_vote_credits,
         deprecate_unused_legacy_vote_plumbing,
+        true,
     )?;
     if let Some(timestamp) = vote.timestamp {
         vote.slots
