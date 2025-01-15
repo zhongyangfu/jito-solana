@@ -721,82 +721,23 @@ impl Tower {
             //   beacuse if multiple forks happen at once, it's possible for all forks to end up with less than
             //   the threshold vote and no validator would ever switch forks.
             warn!("Checking for change to mostly_confirmed_threshold");
-            self.last_config_check_seconds = config_check_seconds;
-            let config_str = "0.45 4 0 24".to_string();
-
-            let split = config_str
-                .strip_suffix("\n")
-                .unwrap_or("")
-                .split_whitespace()
-                .collect::<Vec<&str>>();
-            match split.get(0).unwrap_or(&"").parse::<f64>() {
-                Ok(threshold) => {
-                    if let Some(mostly_confirmed_threshold) = self.mostly_confirmed_threshold {
-                        if mostly_confirmed_threshold != threshold {
-                            self.mostly_confirmed_threshold = Some(threshold);
-                            warn!("Using new mostly_confirmed_threshold: {}", threshold);
-                        }
-                    } else {
-                        self.mostly_confirmed_threshold = Some(threshold);
-                        warn!("Using new mostly_confirmed_threshold: {}", threshold);
-                    }
-                }
-                _ => {
-                    warn!("Using NO mostly_confirmed_threshold");
-                    self.mostly_confirmed_threshold = None;
-                }
-            }
-            match split.get(1).unwrap_or(&"").parse::<u8>() {
-                Ok(count) => {
-                    if let Some(already_count) = self.threshold_ahead_count {
-                        if already_count != count {
-                            self.threshold_ahead_count = Some(count);
-                            warn!("Using new threshold_ahead_count: {}", count);
-                        }
-                    } else {
-                        self.threshold_ahead_count = Some(count);
-                        warn!("Using new threshold_ahead_count: {}", count);
-                    }
-                }
-                _ => {
-                    warn!("Using NO threshold_ahead_count");
-                    self.threshold_ahead_count = None;
-                }
-            }
-            match split.get(2).unwrap_or(&"").parse::<u8>() {
-                Ok(threshold) => {
-                    if let Some(already_after_skip_threshold) = self.after_skip_threshold {
-                        if already_after_skip_threshold != threshold {
-                            self.after_skip_threshold = Some(threshold);
-                            warn!("Using new after_skip_threshold: {}", threshold);
-                        }
-                    } else {
-                        self.after_skip_threshold = Some(threshold);
-                        warn!("Using new after_skip_threshold: {}", threshold);
-                    }
-                }
-                _ => {
-                    warn!("Using NO after_skip_threshold");
-                    self.after_skip_threshold = None;
-                }
-            }
-            match split.get(3).unwrap_or(&"").parse::<u8>() {
-                Ok(escape) => {
-                    if let Some(already_escape) = self.threshold_escape_count {
-                        if already_escape != escape {
-                            self.threshold_escape_count = Some(escape);
-                            warn!("Using new threshold_escape_count: {}", escape);
-                        }
-                    } else {
-                        self.threshold_escape_count = Some(escape);
-                        warn!("Using new threshold_escape_count: {}", escape);
-                    }
-                }
-                _ => {
-                    warn!("Using NO threshold_escape_count");
-                    self.threshold_escape_count = None;
-                }
-            }
+            self.mostly_confirmed_threshold = Some(0.45);
+            self.threshold_ahead_count = Some(4);
+            self.after_skip_threshold = Some(0);
+            self.threshold_escape_count = Some(24);
+            warn!(
+                "Set mostly_confirmed_threshold: {:?}",
+                self.mostly_confirmed_threshold
+            );
+            warn!(
+                "Set threshold_ahead_count: {:?}",
+                self.threshold_ahead_count
+            );
+            warn!("Set after_skip_threshold: {:?}", self.after_skip_threshold);
+            warn!(
+                "Set threshold_escape_count: {:?}",
+                self.threshold_escape_count
+            );
         }
     }
     pub fn get_threshold_ahead_count(&self) -> Option<u8> {
