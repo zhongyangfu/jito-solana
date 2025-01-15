@@ -722,8 +722,7 @@ impl Tower {
             //   the threshold vote and no validator would ever switch forks.
             warn!("Checking for change to mostly_confirmed_threshold");
             self.last_config_check_seconds = config_check_seconds;
-            let config_str = read_to_string(&Path::new("./mostly_confirmed_threshold"))
-                .unwrap_or_else(|_| "0.45 4 0 24".to_string());
+            let config_str = "0.45 4 0 24".to_string();
 
             let split = config_str
                 .strip_suffix("\n")
