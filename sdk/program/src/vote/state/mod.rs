@@ -599,7 +599,6 @@ impl VoteState {
         current_slot: Slot,
         timely_vote_credits: bool,
         deprecate_unused_legacy_vote_plumbing: bool,
-        pop_expired: bool,
     ) {
         // Ignore votes for slots earlier than we already have votes for
         if self
@@ -609,9 +608,7 @@ impl VoteState {
             return;
         }
 
-        if pop_expired {
-            self.pop_expired_votes(next_vote_slot);
-        }
+        self.pop_expired_votes(next_vote_slot);
 
         let landed_vote = LandedVote {
             latency: if timely_vote_credits || !deprecate_unused_legacy_vote_plumbing {

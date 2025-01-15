@@ -766,7 +766,6 @@ pub fn process_vote_unfiltered(
     current_slot: Slot,
     timely_vote_credits: bool,
     deprecate_unused_legacy_vote_plumbing: bool,
-    pop_expired: bool,
 ) -> Result<(), VoteError> {
     check_slots_are_valid(vote_state, vote_slots, &vote.hash, slot_hashes)?;
     vote_slots.iter().for_each(|s| {
@@ -776,7 +775,6 @@ pub fn process_vote_unfiltered(
             current_slot,
             timely_vote_credits,
             deprecate_unused_legacy_vote_plumbing,
-            true,
         )
     });
     Ok(())
@@ -790,7 +788,6 @@ pub fn process_vote(
     current_slot: Slot,
     timely_vote_credits: bool,
     deprecate_unused_legacy_vote_plumbing: bool,
-    pop_expired: bool,
 ) -> Result<(), VoteError> {
     if vote.slots.is_empty() {
         return Err(VoteError::EmptySlots);
@@ -814,12 +811,11 @@ pub fn process_vote(
         current_slot,
         timely_vote_credits,
         deprecate_unused_legacy_vote_plumbing,
-        true,
     )
 }
 
 /// "unchecked" functions used by tests and Tower
-pub fn process_vote_unchecked(vote_state: &mut VoteState, vote: Vote, pop_expired: bool) -> Result<(), VoteError> {
+pub fn process_vote_unchecked(vote_state: &mut VoteState, vote: Vote) -> Result<(), VoteError> {
     if vote.slots.is_empty() {
         return Err(VoteError::EmptySlots);
     }
@@ -833,7 +829,6 @@ pub fn process_vote_unchecked(vote_state: &mut VoteState, vote: Vote, pop_expire
         0,
         true,
         true,
-        pop_expired,
     )
 }
 
@@ -845,7 +840,7 @@ pub fn process_slot_votes_unchecked(vote_state: &mut VoteState, slots: &[Slot]) 
 }
 
 pub fn process_slot_vote_unchecked(vote_state: &mut VoteState, slot: Slot) {
-    let _ = process_vote_unchecked(vote_state, Vote::new(vec![slot], Hash::default()), true);
+    let _ = process_vote_unchecked(vote_state, Vote::new(vec![slot], Hash::default()));
 }
 
 /// Authorize the given pubkey to withdraw or sign votes. This may be called multiple times,
@@ -1127,7 +1122,6 @@ pub fn process_vote_with_account<S: std::hash::BuildHasher>(
         clock.slot,
         timely_vote_credits,
         deprecate_unused_legacy_vote_plumbing,
-        true,
     )?;
     if let Some(timestamp) = vote.timestamp {
         vote.slots
@@ -2064,7 +2058,6 @@ mod tests {
                     hash: Hash::new_unique(),
                     timestamp: None,
                 },
-                true,
             )
             .unwrap();
 
